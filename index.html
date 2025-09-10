@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>組合珠寶型號產生器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --ring: rgba(0,0,0,.08); }
+    .card { border-radius: 1rem; border: 1px solid var(--ring); background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    select:invalid { color:#9ca3af; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-gray-50 to-white text-gray-900">
+  <main class="max-w-screen-lg mx-auto p-6 md:p-10 space-y-6">
+    <header class="flex flex-col items-center justify-center space-y-2">
+      <h1 class="text-2xl md:text-3xl font-semibold text-center">Design Studio 型號與售價產生器</h1>
+      <div class="text-xs text-gray-500">v2.3</div>
+    </header>
+
+    <section class="card p-5 space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium">鑽石來源</label>
+          <select id="source" required class="mt-1 w-full rounded-xl border p-2">
+            <option value="" hidden>必選</option>
+            <option value="X">X – 天然</option>
+            <option value="L">L – 培育</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium">類別</label>
+          <select id="category" required class="mt-1 w-full rounded-xl border p-2">
+            <option value="" hidden>必選</option>
+            <option value="RS">RS</option>
+            <option value="NS">NS</option>
+            <option value="BR">BR</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium">戒頭材質</label>
+          <select id="headMat" required class="mt-1 w-full rounded-xl border p-2">
+            <option value="" hidden>必選</option>
+            <option value="18KW">18KW</option>
+            <option value="18KY">18KY</option>
+            <option value="18KR">18KR</option>
+            <option value="PT95">PT95</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium">戒頭設計基碼</label>
+          <select id="headBase" required class="mt-1 w-full rounded-xl border p-2 uppercase">
+            <option value="" hidden>必選</option>
+            <option value="FP01">FP01</option>
+            <option value="FP02">FP02</option>
+            <option value="FP03">FP03</option>
+            <option value="FP04">FP04</option>
+            <option value="TP04">TP04</option>
+            <option value="FP05">FP05</option>
+            <option value="HP01">HP01</option>
+            <option value="HP02">HP02</option>
+            <option value="SP01">SP01</option>
+            <option value="SP02">SP02</option>
+            <option value="SP03">SP03</option>
+            <option value="BP01">BP01</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium">主鑽形狀</label>
+          <select id="shape" required class="mt-1 w-full rounded-xl border p-2">
+            <option value="" hidden>必選</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium">克拉數 或 尺寸碼</label>
+          <input id="caratOrCode" required class="mt-1 w-full rounded-xl border p-2" placeholder="輸入 0.91 或 03" />
+          <p id="bandHint" class="text-xs text-gray-600 mt-1 hidden"></p>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium">戒身設計型號</label>
+          <select id="shankDesign" required class="mt-1 w-full rounded-xl border p-2 uppercase">
+            <option value="" hidden>必選</option>
+            <option value="SO01">SO01</option>
+            <option value="SO02">SO02</option>
+            <option value="SO03">SO03</option>
+            <option value="SO04">SO04</option>
+            <option value="SS01">SS01</option>
+            <option value="SS02">SS02</option>
+            <option value="SS03">SS03</option>
+            <option value="SS04">SS04</option>
+            <option value="PA01">PA01</option>
+            <option value="PA02">PA02</option>
+            <option value="PA03">PA03</option>
+            <option value="PA04">PA04</option>
+            <option value="PA05">PA05</option>
+            <option value="PA06">PA06</option>
+            <option value="PA07">PA07</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-medium">戒身材質</label>
+          <select id="shankMat" required class="mt-1 w-full rounded-xl border p-2">
+            <option value="" hidden>必選</option>
+            <option value="18KW">18KW</option>
+            <option value="18KY">18KY</option>
+            <option value="18KR">18KR</option>
+            <option value="PT95">PT95</option>
+          </select>
+          <p id="biHint" class="text-xs text-gray-500 mt-1 hidden">* 僅在戒頭材質為 18K 類且戒身設計為 PA06 時提供 18WR/18WY。</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 text-sm">
+        <span class="px-2.5 py-1 rounded-full bg-gray-100 border">鑽石來源+類別</span>
+        <span id="previewPrefix" class="mono">--</span>
+        <span class="opacity-40">-</span>
+        <span class="px-2.5 py-1 rounded-full bg-gray-100 border">戒頭材質</span>
+        <span id="previewHeadMat" class="mono">--</span>
+        <span class="opacity-40">-</span>
+        <span class="px-2.5 py-1 rounded-full bg-gray-100 border">戒頭設計+形狀+尺寸碼</span>
+        <span id="previewHeadCombo" class="mono">--</span>
+        <span class="opacity-40">-</span>
+        <span class="px-2.5 py-1 rounded-full bg-gray-100 border">戒身材質</span>
+        <span id="previewShankMat" class="mono">--</span>
+        <span class="opacity-40">-</span>
+        <span class="px-2.5 py-1 rounded-full bg-gray-100 border">戒身設計</span>
+        <span id="previewShankDesign" class="mono">--</span>
+      </div>
+    </section>
+
+    <section class="card p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <div class="text-sm text-gray-500">最終型號</div>
+        <div id="finalModel" class="mono text-2xl tracking-wide select-all">請確認資訊已完整</div>
+      </div>
+      <div class="flex gap-2">
+        <button id="copyBtn" class="px-4 py-2 rounded-xl bg-gray-900 text-white disabled:opacity-40" disabled>複製型號</button>
+        <button id="resetBtn" class="px-4 py-2 rounded-xl border">重設</button>
+      </div>
+    </section>
+
+    <section class="card p-5 space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold">價格</h2>
+        <span class="text-xs text-gray-500">HKD = TWD ÷ 4；SGD = TWD ÷ 23 × 1.09（四捨五入到整數）</span>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-3 rounded-xl border bg-gray-50"><div class="text-xs text-gray-500">新台幣 TWD</div><div id="priceTWD" class="text-2xl mono">—</div></div>
+        <div class="p-3 rounded-xl border bg-gray-50"><div class="text-xs text-gray-500">港幣 HKD</div><div id="priceHKD" class="text-2xl mono">—</div></div>
+        <div class="p-3 rounded-xl border bg-gray-50"><div class="text-xs text-gray-500">新幣 SGD</div><div id="priceSGD" class="text-2xl mono">—</div></div>
+      </div>
+      <p id="priceNote" class="text-xs text-amber-600 hidden">找不到此組合的價目，請在程式內補齊。</p>
+    </section>
+  </main>
+
+  <script>
+    // ====== 規則資料 ======
+    const ALLOWED_SHAPES = { FP01:['C','E','O','P','R'], FP02:['R'], FP03:['R'], FP04:['C','O','R'], TP04:['H'], FP05:['R'], HP01:['C','E','O','P','R'], HP02:['R'], SP01:['R'], SP02:['R'], SP03:['R'], BP01:['C','O','R'] };
+
+    const SIZE_BANDS = [
+      {code:'00',min:0.30,max:0.39,note:'0.30–0.39ct'},
+      {code:'01',min:0.40,max:0.49,note:'0.40–0.49ct'},
+      {code:'02',min:0.50,max:0.59,note:'0.50–0.59ct'},
+      {code:'07',min:0.60,max:0.79,note:'0.60–0.79ct'},
+      {code:'03',min:0.80,max:1.49,note:'0.80–1.49ct'},
+      {code:'04',min:1.50,max:2.99,note:'1.50–2.99ct'},
+      {code:'05',min:3.0,max:3.99,note:'3.0–3.99ct'},
+      {code:'06',min:4.0,max:4.99,note:'4.0–4.99ct'},
+      {code:'09',min:5.0,max:5.99,note:'5.0–5.99ct'}
+    ];
+
+    // 價表：戒頭（基碼×形狀×材質類別）
+    const HEAD_PRICE = {
+      FP01:{C:{'18K':7060,'PT':8560},E:{'18K':4080,'PT':5580},O:{'18K':5350,'PT':6850},P:{'18K':4870,'PT':6370},R:{'18K':4760,'PT':6260}},
+      FP02:{R:{'18K':5710,'PT':7210}},
+      FP03:{R:{'18K':6810,'PT':8310}},
+      FP04:{C:{'18K':10590,'PT':12090},O:{'18K':8840,'PT':10340},R:{'18K':9520,'PT':11020}},
+      TP04:{H:{'18K':8510,'PT':10010}},
+      FP05:{R:{'18K':5830,'PT':7330}},
+      HP01:{C:{'18K':21580,'PT':23080},E:{'18K':31710,'PT':33210},H:{'18K':22170,'PT':23670},O:{'18K':23830,'PT':25330},P:{'18K':27740,'PT':29240},R:{'18K':20680,'PT':22180}},
+      HP02:{R:{'18K':14820,'PT':16320}},
+      SP01:{R:{'18K':20460,'PT':21960}},
+      SP02:{R:{'18K':4750,'PT':6250}},
+      SP03:{R:{'18K':4190,'PT':5690}},
+      BP01:{C:{'18K':6090,'PT':7590},O:{'18K':5840,'PT':7340},R:{'18K':6920,'PT':8420}}
+    };
+
+    // 價表：戒身（設計型號×材質類別）
+    const SHANK_PRICE = {
+      SO01:{'18K':24840,'PT':29340},SO02:{'18K':27400,'PT':31900},SO03:{'18K':29380,'PT':33880},SO04:{'18K':36920,'PT':41420},
+      SS01:{'18K':23970,'PT':28470},SS02:{'18K':31470,'PT':35970},SS03:{'18K':28220,'PT':32720},SS04:{'18K':28090,'PT':32590},
+      PA01:{'18K':25460,'PT':29960},PA02:{'18K':31180,'PT':35680},PA03:{'18K':30560,'PT':35060},PA04:{'18K':41280,'PT':45780},
+      PA05:{'18K':29480,'PT':33980},PA06:{'18K':33790,'PT':38290},PA07:{'18K':37000,'PT':41500}
+    };
+
+    // ====== 工具函式 ======
+    const $ = id=>document.getElementById(id);
+    const fmt = n=> new Intl.NumberFormat('zh-Hant',{maximumFractionDigits:0}).format(n);
+    const matClass = m => (m==='PT95' ? 'PT' : '18K'); // 18WR/18WY 也視為 18K
+
+    function renderShapeOptions(base){
+      const labels = {R:'R – Round 圓鑽',C:'C – Cushion 枕型',H:'H – Heart 心型',O:'O – Oval 橢圓',P:'P – Pear 梨型',E:'E – Emerald 祖母綠'};
+      const allowed = ALLOWED_SHAPES[base]||[];
+      const cur=$('shape').value;
+      $('shape').innerHTML = '<option value="" hidden>必選</option>' + allowed.map(s=>`<option value="${s}">${labels[s]}</option>`).join('');
+      if(allowed.includes(cur)) $('shape').value = cur; else $('shape').value='';
+    }
+
+    function caratToCode(val){
+      const raw=(val||'').trim(); if(!raw) return null;
+      if(/^\d{2}$/.test(raw)) return {code:raw};
+      const num=Number(raw); if(Number.isNaN(num)) return null;
+      const band=SIZE_BANDS.find(b=>num>=b.min && num<=b.max);
+      return band?{code:band.code,usedBand:band}:null;
+    }
+
+    function renderShankMaterialOptions(){
+      const headMat=$('headMat').value; const shankDesign=$('shankDesign').value;
+      const allowBi=(['18KW','18KY','18KR'].includes(headMat) && shankDesign==='PA06');
+      const base=['18KW','18KY','18KR','PT95']; const bi=allowBi?['18WR','18WY']:[];
+      const cur=$('shankMat').value;
+      $('shankMat').innerHTML = '<option value="" hidden>必選</option>' + base.concat(bi).map(v=>`<option value="${v}">${v}${v==='18WR'?'（雙色）':''}${v==='18WY'?'（雙色）':''}</option>`).join('');
+      if(base.concat(bi).includes(cur)) $('shankMat').value=cur; else $('shankMat').value='';
+      $('biHint').classList.toggle('hidden', !allowBi);
+    }
+
+    function getPriceTWD({headBase, shape, headMat, shankDesign, shankMat}){
+      const head = HEAD_PRICE?.[headBase]?.[shape]?.[matClass(headMat)] ?? null;
+      const shank = SHANK_PRICE?.[shankDesign]?.[matClass(shankMat)] ?? null;
+      if(head==null || shank==null) return null; return head + shank;
+    }
+
+    function update(){
+      renderShankMaterialOptions();
+      const source=$('source').value, category=$('category').value, headMat=$('headMat').value;
+      const headBase=$('headBase').value, shape=$('shape').value, caratOrCode=$('caratOrCode').value;
+      const shankMat=$('shankMat').value, shankDesign=$('shankDesign').value;
+
+      // 確保形狀依基碼顯示
+      renderShapeOptions(headBase);
+
+      const sizeRes=caratToCode(caratOrCode); const sizeCode=sizeRes?.code||'';
+      if(sizeRes?.usedBand){ $('bandHint').textContent=`對應尺寸碼：${sizeRes.code}（${sizeRes.usedBand.note}）`; $('bandHint').classList.remove('hidden'); }
+      else { $('bandHint').classList.add('hidden'); }
+
+      const prefix=[source,category].filter(Boolean).join('');
+      const headCombo=headBase&&shape&&sizeCode?`${headBase}${shape}${sizeCode}`:'';
+      const requiredFilled=!!(source&&category&&headMat&&headBase&&shape&&sizeCode&&shankMat&&shankDesign);
+      const model=requiredFilled?[prefix,headMat,headCombo,shankMat,shankDesign].join('-'):'';
+      $('finalModel').textContent=model||'請確認資訊已完整'; $('finalModel').dataset.value=model; $('copyBtn').disabled=!requiredFilled;
+
+      if(requiredFilled){
+        const twd = getPriceTWD({headBase,shape,headMat,shankDesign,shankMat});
+        if(twd!=null){ const hkd=Math.round(twd/4); const sgd=Math.round(twd/23*1.09);
+          $('priceTWD').textContent='NT$ '+fmt(twd); $('priceHKD').textContent='HK$ '+fmt(hkd); $('priceSGD').textContent='S$ '+fmt(sgd); $('priceNote').classList.add('hidden');
+        }else{ $('priceTWD').textContent='—'; $('priceHKD').textContent='—'; $('priceSGD').textContent='—'; $('priceNote').classList.remove('hidden'); }
+      }else{ $('priceTWD').textContent='—'; $('priceHKD').textContent='—'; $('priceSGD').textContent='—'; $('priceNote').classList.add('hidden'); }
+    }
+
+    // ====== 事件綁定（合併補丁） ======
+    function bind(){
+      ['source','category','caratOrCode','shankMat'].forEach(id=>{ $(id).addEventListener('change',update); $(id).addEventListener('input',update); });
+      $('headBase').addEventListener('change',()=>{ renderShapeOptions($('headBase').value); update(); });
+      $('headBase').addEventListener('input', ()=>{ renderShapeOptions($('headBase').value); update(); });
+      $('shape').addEventListener('change',update); $('shape').addEventListener('input',update);
+      // 保險：點擊/聚焦時若尚未載入形狀則補渲染
+      const ensureShapes=()=>{ const sel=$('shape'); if(sel && sel.options.length<=1) renderShapeOptions($('headBase').value); };
+      $('shape').addEventListener('focus',ensureShapes); $('shape').addEventListener('click',ensureShapes);
+      // 18WR/18WY：頭材質/戒身設計變更時先重繪材質
+      ['headMat','shankDesign'].forEach(id=>{ $(id).addEventListener('change',()=>{ renderShankMaterialOptions(); update(); }); $(id).addEventListener('input',()=>{ renderShankMaterialOptions(); update(); }); });
+      $('copyBtn').addEventListener('click',async()=>{ const t=$('finalModel').dataset.value||''; if(!t) return; try{ await navigator.clipboard.writeText(t); alert('已複製: '+t); }catch(e){} });
+      $('resetBtn').addEventListener('click',()=>{ ['source','category','headMat','headBase','shape','caratOrCode','shankMat','shankDesign'].forEach(id=>$(id).value=''); renderShapeOptions($('headBase').value); renderShankMaterialOptions(); update(); });
+    }
+
+    // 初始
+    bind(); renderShapeOptions($('headBase').value); renderShankMaterialOptions(); update();
+  </script>
+</body>
+</html>
