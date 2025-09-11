@@ -255,7 +255,7 @@
 
       if(requiredFilled){
         const twd = getPriceTWD({headBase,shape,headMat,shankDesign,shankMat});
-        if(twd!=null){ const hkd=Math.round(twd/4); const sgd=Math.ceil(twd/23*1.09/10)*10;
+        if(twd!=null){ const hkd=Math.ceil(twd/4/10)*10; const sgd=Math.ceil(twd/23*1.09/10)*10;
           $('priceTWD').textContent='NT$ '+fmt(twd); $('priceHKD').textContent='HK$ '+fmt(hkd); $('priceSGD').textContent='S$ '+fmt(sgd); $('priceNote').classList.add('hidden');
         }else{ $('priceTWD').textContent='—'; $('priceHKD').textContent='—'; $('priceSGD').textContent='—'; $('priceNote').classList.remove('hidden'); }
       }else{ $('priceTWD').textContent='—'; $('priceHKD').textContent='—'; $('priceSGD').textContent='—'; $('priceNote').classList.add('hidden'); }
