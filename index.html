@@ -52,20 +52,19 @@
         <div>
           <label class="text-sm font-medium">戒頭設計基碼</label>
           <select id="headBase" required class="mt-1 w-full rounded-xl border p-2 uppercase">
-            <option value="" hidden>必選</option>
             <option value="FP01">FP01</option>
             <option value="FP02">FP02</option>
             <option value="FP03">FP03</option>
             <option value="FP04">FP04</option>
-            <option value="TP04">TP04</option>
             <option value="FP05">FP05</option>
+            <option value="TP01">TP01</option>
+            <option value="TP04">TP04</option>
             <option value="HP01">HP01</option>
             <option value="HP02">HP02</option>
             <option value="SP01">SP01</option>
             <option value="SP02">SP02</option>
             <option value="SP03">SP03</option>
-            <option value="BP01">BP01</option>
-          </select>
+            <option value="BP01">BP01</option></select>
         </div>
 
         <div>
@@ -159,7 +158,7 @@
 
   <script>
     // ====== 規則資料 ======
-    const ALLOWED_SHAPES = { FP01:['C','E','O','P','R'], FP02:['R'], FP03:['R'], FP04:['C','O','R'], TP04:['H'], FP05:['R'], HP01:['C','E','O','P','R'], HP02:['R'], SP01:['R'], SP02:['R'], SP03:['R'], BP01:['C','O','R'] };
+    const ALLOWED_SHAPES = { TP01:['H'], FP01:['C','E','O','P','R'], FP02:['R'], FP03:['R'], FP04:['C','O','R'], TP04:['H'], FP05:['R'], HP01:['C','E','H','O','P','R'], HP02:['R'], SP01:['R'], SP02:['R'], SP03:['R'], BP01:['C','O','R'] };
 
     const SIZE_BANDS = [
       {code:'00',min:0.30,max:0.39,note:'0.30–0.39ct'},
@@ -180,6 +179,7 @@
       FP03:{R:{'18K':6810,'PT':8310}},
       FP04:{C:{'18K':10590,'PT':12090},O:{'18K':8840,'PT':10340},R:{'18K':9520,'PT':11020}},
       TP04:{H:{'18K':8510,'PT':10010}},
+      TP01:{H:{'18K':4880,'PT':6380}},
       FP05:{R:{'18K':5830,'PT':7330}},
       HP01:{C:{'18K':21580,'PT':23080},E:{'18K':31710,'PT':33210},H:{'18K':22170,'PT':23670},O:{'18K':23830,'PT':25330},P:{'18K':27740,'PT':29240},R:{'18K':20680,'PT':22180}},
       HP02:{R:{'18K':14820,'PT':16320}},
