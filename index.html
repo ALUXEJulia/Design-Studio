@@ -146,7 +146,7 @@
     <section class="card p-5 space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-lg font-semibold">價格</h2>
-        <span class="text-xs text-gray-500">HKD = TWD ÷ 4；SGD = TWD ÷ 23 × 1.09（四捨五入到整數）</span>
+        
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="p-3 rounded-xl border bg-gray-50"><div class="text-xs text-gray-500">新台幣 TWD</div><div id="priceTWD" class="text-2xl mono">—</div></div>
@@ -255,7 +255,7 @@
 
       if(requiredFilled){
         const twd = getPriceTWD({headBase,shape,headMat,shankDesign,shankMat});
-        if(twd!=null){ const hkd=Math.round(twd/4); const sgd=Math.round(twd/23*1.09);
+        if(twd!=null){ const hkd=Math.round(twd/4); const sgd=Math.ceil(twd/23*1.09/10)*10;
           $('priceTWD').textContent='NT$ '+fmt(twd); $('priceHKD').textContent='HK$ '+fmt(hkd); $('priceSGD').textContent='S$ '+fmt(sgd); $('priceNote').classList.add('hidden');
         }else{ $('priceTWD').textContent='—'; $('priceHKD').textContent='—'; $('priceSGD').textContent='—'; $('priceNote').classList.remove('hidden'); }
       }else{ $('priceTWD').textContent='—'; $('priceHKD').textContent='—'; $('priceSGD').textContent='—'; $('priceNote').classList.add('hidden'); }
